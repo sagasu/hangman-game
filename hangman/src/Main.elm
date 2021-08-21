@@ -42,7 +42,7 @@ view model =
             phrase
             |> String.split ""
             |> List.map(\char -> 
-                if char == "" then
+                if char == " " then
                     " "
                 else
                     "_"
@@ -52,10 +52,17 @@ view model =
                     span [] [text char]
                 )
             |> div []
+        buttonsHtml = "abcdefghijklmnopqrstuvwxyz"
+                      |> String.split ""
+                      |> List.map (\char ->
+                        button[] [text char]
+                       )
+                      |> div []
     in
     div []
         [
-            phraseHtml
+            phraseHtml,
+            buttonsHtml
         ]
 
 
