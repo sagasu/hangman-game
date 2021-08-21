@@ -10,4 +10,8 @@ run this in folder where this README.md is, it will add only in a scope of a giv
 `set PATH=%PATH%;D:\worek\repos\hangman-game\node_modules\.bin;`  
 `create-elm-app hangman`  
 `cd hangman`  
-`elm-app start`  
+`npx elm-app start`  
+
+# How to run after install
+`cd hangman`
+`npx elm-app start`
