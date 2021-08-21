@@ -11,23 +11,24 @@ import Set exposing (Set)
 
 
 type alias Model =
-    {guesses: Set String}
+    {guesses: Set String,
+    phrase: String}
 
 
 init : ( Model, Cmd Msg )
 init =
     ( {
+        phrase = "hangman in elm",
         guesses = Set.empty
     }, Cmd.none )
 
-phrase: String
-phrase = "hangman in elm"
 
 ---- UPDATE ----
 
 
 type Msg
     = Guess String
+    |Restart
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -35,6 +36,8 @@ update msg model =
     case msg of
         Guess char -> 
             ( {model | guesses = Set.insert char model.guesses }, Cmd.none)
+        Restart -> 
+            ({model | guesses = Set.empty}, Cmd.none)
 
 
 
@@ -45,7 +48,7 @@ view : Model -> Html Msg
 view model =
     let 
         phraseHtml = 
-            phrase
+            model.phrase
             |> String.split ""
             |> List.map(\char -> 
                 if char == " " then
@@ -62,7 +65,7 @@ view model =
             |> div []
 
         phraseSet = 
-            phrase
+            model.phrase
             |> String.split ""
             |> Set.fromList
 
@@ -84,7 +87,8 @@ view model =
         [
             phraseHtml,
             buttonsHtml,
-            failuresHtml
+            failuresHtml,
+            button [onClick Restart] [text "Restart"]
         ]
 
 

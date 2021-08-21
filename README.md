@@ -15,3 +15,10 @@ run this in folder where this README.md is, it will add only in a scope of a giv
 # How to run after install
 `cd hangman`
 `npx elm-app start`
+
+# To install more elm modules
+`cd hangman`
+`npx elm install modulename`
+
+For example:
+`npx elm install elm/http`
