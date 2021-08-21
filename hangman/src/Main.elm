@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, text, div, h1, img)
+import Html exposing (..)
 import Html.Attributes exposing (src)
 
 
@@ -16,7 +16,8 @@ init : ( Model, Cmd Msg )
 init =
     ( {}, Cmd.none )
 
-
+phrase: String
+phrase = "hangman in elm"
 
 ---- UPDATE ----
 
@@ -36,10 +37,27 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    let 
+        phraseHtml = 
+            phrase
+            |> String.split ""
+            |> List.map(\char -> 
+                if char == "" then
+                    " "
+                else
+                    "_"
+                )
+            |> List.map 
+                (\char ->
+                    span [] [text char]
+                )
+            |> div []
+    in
     div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+        [
+            phraseHtml
         ]
+
 
 
 
