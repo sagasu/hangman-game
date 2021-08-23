@@ -22,3 +22,4 @@ run this in folder where this README.md is, it will add only in a scope of a giv
 
 For example:
 `npx elm install elm/http`
+`npx elm install elm/json`

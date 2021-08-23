@@ -4,8 +4,9 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (src)
 import Html.Events exposing (..)
+import Http
+import Json.Decode as Decode exposing (Decoder)
 import Set exposing (Set)
-
 
 ---- MODEL ----
 
@@ -29,6 +30,7 @@ init =
 type Msg
     = Guess String
     |Restart
+    |NewPhrase (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -37,10 +39,20 @@ update msg model =
         Guess char -> 
             ( {model | guesses = Set.insert char model.guesses }, Cmd.none)
         Restart -> 
-            ({model | guesses = Set.empty}, Cmd.none)
+            ({model | guesses = Set.empty}, fetchWord)
 
+        NewPhrase result -> case result of
+            Ok phrase -> ({model | phrase = phrase }, Cmd.none)
+            Err _ -> (model, Cmd.none)
 
+fetchWord: Cmd Msg
+fetchWord = Http.get {
+           url = "https://snapdragon-fox.glitch.me/word",
+           expect = Http.expectJson NewPhrase wordDecoder
+           }
 
+wordDecoder : Decoder String
+wordDecoder = Decode.field "word" Decode.string
 ---- VIEW ----
 
 
