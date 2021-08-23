@@ -1,5 +1,7 @@
 # hangman-game
 
+![Hangman game](./hangman.png)  
+
 # How to create elm w/o installing it globally (-g option).
 run this in folder where this README.md is, it will add only in a scope of a given `cmd` session bin tools from node modules. No other application will be affected, the scope is a single `cmd` session.  
 
