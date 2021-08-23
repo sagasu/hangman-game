@@ -11,17 +11,19 @@ import Set exposing (Set)
 ---- MODEL ----
 
 
-type alias Model =
+type Model =
+    Loading
+    | Running GameState
+    | Error
+
+type alias GameState = 
     {guesses: Set String,
     phrase: String}
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {
-        phrase = "hangman in elm",
-        guesses = Set.empty
-    }, Cmd.none )
+    ( Loading, fetchWord )
 
 
 ---- UPDATE ----
@@ -37,13 +39,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Guess char -> 
-            ( {model | guesses = Set.insert char model.guesses }, Cmd.none)
+            case model of
+                Running gameState ->
+                    ( Running { gameState | guesses = Set.insert char gameState.guesses }, Cmd.none)
+                _ -> (model, Cmd.none)
         Restart -> 
-            ({model | guesses = Set.empty}, fetchWord)
+            ( Loading, fetchWord)
 
         NewPhrase result -> case result of
-            Ok phrase -> ({model | phrase = phrase }, Cmd.none)
-            Err _ -> (model, Cmd.none)
+            Ok phrase -> (Running {phrase = phrase, guesses = Set.empty }, Cmd.none)
+            Err _ -> (Error, Cmd.none)
 
 fetchWord: Cmd Msg
 fetchWord = Http.get {
@@ -58,14 +63,23 @@ wordDecoder = Decode.field "word" Decode.string
 
 view : Model -> Html Msg
 view model =
+    case model of
+        Loading ->
+            div [] [text "Loading"]
+        Running gameState -> 
+            viewGameState gameState
+        Error -> div[][text "Error"]
+
+viewGameState : GameState -> Html Msg
+viewGameState gameState = 
     let 
         phraseHtml = 
-            model.phrase
+            gameState.phrase
             |> String.split ""
             |> List.map(\char -> 
                 if char == " " then
                     " "
-                else if Set.member char model.guesses then
+                else if Set.member char gameState.guesses then
                     char
                 else
                     "_"
@@ -77,12 +91,12 @@ view model =
             |> div []
 
         phraseSet = 
-            model.phrase
+            gameState.phrase
             |> String.split ""
             |> Set.fromList
 
         failuresHtml = 
-            model.guesses
+            gameState.guesses
             |> Set.toList
             |> List.filter (\char -> not <| Set.member char phraseSet)
             |> List.map (\char -> span [] [text char])
